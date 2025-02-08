@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Proposal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes floating {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .floating-heart {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        .beating-heart {
+            animation: heartbeat 1.5s ease-in-out infinite;
+            color: #ff4b75;
+        }
+
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .love-letter-border {
+            position: relative;
+            border: 3px solid #ff69b4;
+            border-radius: 16px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px rgba(255, 105, 180, 0.2);
+        }
+
+        .corner-heart {
+            position: absolute;
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .top-left-heart {
+            top: 10px;
+            left: 10px;
+        }
+
+        .top-right-heart {
+            top: 10px;
+            right: 10px;
+        }
+
+        .bottom-left-heart {
+            bottom: 10px;
+            left: 10px;
+        }
+
+        .bottom-right-heart {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .button-hover {
+            transition: all 0.3s ease;
+        }
+
+        .button-hover:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+        }
+
+        #noBtn {
+            transition: all 0.3s ease;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: -70px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        @media (max-width: 768px) {
+            .back-button {
+                position: static;
+                margin-bottom: 1rem;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-red-50">
+    <div id="main-container" class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="love-letter-border w-full max-w-xl mx-auto relative">
+            <span class="corner-heart top-left-heart">❤️</span>
+            <span class="corner-heart top-right-heart">❤️</span>
+            <span class="corner-heart bottom-left-heart">❤️</span>
+            <span class="corner-heart bottom-right-heart">❤️</span>
+            
+            <button id="backBtn" onclick="handleBack()" class="back-button p-2 text-pink-500 hover:text-pink-600 transition-colors duration-200 flex items-center gap-2 hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Back
+            </button>
+            
+            <div class="flex flex-col items-center justify-center">
+                <div class="floating-heart mb-8">
+                    <div class="beating-heart">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    </div>
+                </div>
+
+                <h1 id="question" class="text-3xl font-bold text-pink-600 mb-8 text-center">
+                    Will you be my Valentine? 💝
+                </h1>
+
+                <div class="flex flex-col items-center gap-4">
+                    <p id="hint" class="text-gray-600 animate-bounce mb-4 hidden">
+                        * The "No" button is getting tired, maybe try the other one? 😉
+                    </p>
+                    
+                    <div class="flex gap-6">
+                        <button onclick="handleYes()" class="button-hover px-8 py-4 bg-pink-500 text-white rounded-lg hover:bg-pink-600 font-bold text-lg">
+                            Yes! 💖
+                        </button>
+
+                        <button id="noBtn" onclick="handleNo()" class="button-hover px-8 py-4 bg-gray-500 text-white rounded-lg hover:bg-gray-600 font-bold text-lg">
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="success-screen" class="hidden flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-50 to-red-50 p-4">
+        <div class="love-letter-border w-full max-w-xl mx-auto">
+            <span class="corner-heart top-left-heart">❤️</span>
+            <span class="corner-heart top-right-heart">❤️</span>
+            <span class="corner-heart bottom-left-heart">❤️</span>
+            <span class="corner-heart bottom-right-heart">❤️</span>
+            
+            <div class="floating-heart mb-6">
+                <div class="beating-heart mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-pink-600 mt-6 text-center">
+                Yay! angana vazhik vaa!💖
+            </h1>
+            
+            <div class="flex gap-4 mt-8 justify-center">
+                <button onclick="startOver()" class="button-hover px-6 py-3 bg-pink-400 text-white rounded-lg hover:bg-pink-500 transition-all duration-200 flex items-center gap-2 font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    Start Over
+                </button>
+                
+                <button onclick="handleShare()" class="button-hover px-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all duration-200 flex items-center gap-2 font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    Share the Love
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg">
+        Copied to clipboard! 📋
+    </div>
+
+    <script>
+        let stage = 0;
+        const followUpQuestions = [
+            "No ennu urap ahno🥹",
+            "onnu 5 mins alojicht parayu🙂",
+            "chakkarae allee😍",
+            "muth allee😜",
+            "dairyam undel yes parayada🙁",
+            "angana parayale enik sangadam akm🥹🥹 yes para",
+            "appo parayilla alle",
+            "🥹 enik bhishamam onula ennalm cheriyore sangadam🥹😭",
+            "okay bei poyt pine vara tata"
+            
+        ];
+
+        function handleNo() {
+            if (stage < followUpQuestions.length) {
+                stage++;
+                const noBtn = document.getElementById('noBtn');
+                const x = Math.random() * 300 - 150;
+                const y = Math.random() * 300 - 150;
+                noBtn.style.transform = `translate(${x}px, ${y}px)`;
+                
+                document.getElementById('question').textContent = followUpQuestions[stage - 1];
+                document.getElementById('backBtn').classList.remove('hidden');
+                
+                if (stage >= followUpQuestions.length) {
+                    document.getElementById('hint').classList.remove('hidden');
+                    noBtn.textContent = "enna sheri molu poyt pinne vaa";
+                }
+            }
+        }
+
+        function handleYes() {
+            document.getElementById('main-container').classList.add('hidden');
+            document.getElementById('success-screen').classList.remove('hidden');
+        }
+
+        function handleBack() {
+            if (stage > 0) {
+                stage--;
+                const noBtn = document.getElementById('noBtn');
+                noBtn.style.transform = 'translate(0, 0)';
+                
+                document.getElementById('question').textContent = 
+                    stage === 0 ? "Will you be my Valentine? 💝" : followUpQuestions[stage - 1];
+                
+                if (stage === 0) {
+                    document.getElementById('backBtn').classList.add('hidden');
+                }
+                
+                if (stage < followUpQuestions.length) {
+                    document.getElementById('hint').classList.add('hidden');
+                    noBtn.textContent = "No";
+                }
+            }
+        }
+
+        function startOver() {
+            stage = 0;
+            document.getElementById('success-screen').classList.add('hidden');
+            document.getElementById('main-container').classList.remove('hidden');
+            document.getElementById('question').textContent = "Will you be my Valentine? 💝";
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('hint').classList.add('hidden');
+            document.getElementById('noBtn').textContent = "No";
+            document.getElementById('noBtn').style.transform = 'translate(0, 0)';
+        }
+
+        async function handleShare() {
+            const shareData = {
+                title: "Valentine's Day Success! 💖",
+                text: "They said YES to being my Valentine! 💝",
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    await navigator.clipboard.writeText(shareData.text + '\n' + shareData.url);
+                    const toast = document.getElementById('toast');
+                    toast.style.display = 'block';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 3000);
+                }
+            } catch (err) {
+                console.error('Error sharing:', err);
+            }
+        }
+    </script>
+</body>
+</html>
